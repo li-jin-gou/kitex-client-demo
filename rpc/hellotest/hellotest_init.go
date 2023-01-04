@@ -1,40 +1,36 @@
-package notedemo
+package hellotest
 
 import (
-	"sync"
-
 	"github.com/cloudwego/kitex/client"
+	"sync"
 )
 
 var (
 	// todo edit custom config
-	defaultClient     NoteDemoClient
-	defaultDstService = "demonote"
+	defaultClient     RPCClient
+	defaultDstService = ".RealServiceName"
 	defaultClientOpts = []client.Option{
-		client.WithMuxConnection(1),
 		client.WithHostPorts("127.0.0.1:8888"),
 	}
-	once       sync.Once
-	mockClient = &MockClientStruct{}
+	once sync.Once
 )
 
 func init() {
 	DefaultClient()
 }
 
-func DefaultClient() NoteDemoClient {
+func DefaultClient() RPCClient {
 	once.Do(func() {
 		defaultClient = newClient(defaultDstService, defaultClientOpts...)
 	})
 	return defaultClient
 }
 
-func newClient(dstService string, opts ...client.Option) NoteDemoClient {
-	c, err := NewNoteDemoClient(dstService, opts...)
+func newClient(dstService string, opts ...client.Option) RPCClient {
+	c, err := NewRPCClient(dstService, opts...)
 	if err != nil {
 		panic("failed to init client: " + err.Error())
 	}
-	c.SetMockClient(mockClient)
 	return c
 }
 
